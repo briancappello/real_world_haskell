@@ -1,8 +1,11 @@
 -- file: ch3/CustomDataTypes.hs aka BookStore.hs
 
+import Data.Ord
+import Data.List
+
 -- TYPE/VALUE CONSTRUCTORs: defining custom data types
 -- data: the ``data`` keyword is used to declare a new type
--- BookInfo: TYPE constructor (name of the new type)
+-- BookInfo: TYPE CONSTRUCTOR (name of the new type)
 -- Book: VALUE CONSTRUCTOR. must have first letter capitolized. (aka data
 --        constructor; call to create a value of the BookInfo type)
 -- Int String [String]: the components of the new type (each a field in struct,
@@ -81,7 +84,6 @@ data Polar2D = Polar2D Double Double
 
 -- Enumeration: Unlike C, these are not Ints
 data Color = Red
-            | Orange
             | Yellow
             | Green
             | Blue
@@ -92,10 +94,10 @@ data Color = Red
 -- examples of deconstruction (type-verified tuple unpacking) functions
 third (a, b, c) = c
 -- let t = (2, 3, 4)
--- third t ==> returns 4
+-- third t >=> "returns" 4
 complicated (True, a, x:xs, 5) = (a, xs)
 -- let t = (True, 6, [1,2,3], 5)
--- complicated t ==> returns (6, [2,3])
+-- complicated t >=> "returns" (6, [2,3])
 
 
 -- RECORD SYNTAX
@@ -103,9 +105,9 @@ complicated (True, a, x:xs, 5) = (a, xs)
 
 data Customer = Customer
 --    accessor_fn_name :: Type
-    { customerID       :: CustomerID
-    , customerName     :: String
-    , customerAddress  :: Address
+    { customerID       :: CustomerID -- Int
+    , customerName     :: String     -- String
+    , customerAddress  :: Address    -- [String]
     } deriving (Show)
 
 -- this is essentially equivalent to the following commented block of code:
@@ -122,6 +124,9 @@ data Customer = Customer
 -- customerAddress :: Customer -> [String]
 -- customerAddress (Customer _ _ address) = address
 
+-- creating a new Customer is the same:
+customer1 = Customer 1 "Joe Schmoe" ["1 Main St", "USA"]
+
 -- Keyword Arguments (unordered) are also supported:
 customer2 = Customer
     { customerID = 2
@@ -130,6 +135,8 @@ customer2 = Customer
     }
 
 -- PARAMETERIZED TYPES
+-- data MyMaybe a = Just a | Nothing -- Just & Nothing are type VALUE CONSTRUCTORS
+-- our own version of Maybe
 data ATypeWithNonePossible a = HasParam a
                              | HasNoParam
                                deriving (Show)
@@ -166,14 +173,14 @@ simpleTree = Node "parent" (Node "left" Leaf Leaf) (Node "right" Leaf Leaf)
 -- ERROR
 -- here we try to return the second value of a list, but only if there are
 --   enough elements
-another_second :: [a] -> a
+another_second    :: [a] -> a
 another_second xs = if null (tail xs)
                     then error "list too short"
                     else head (tail xs)
 
 -- error, however, completely terminates execution, so instead we should use
 --   Maybe when errors are recoverable:
-safe_second :: [a] -> Maybe a
+safe_second    :: [a] -> Maybe a
 safe_second [] = Nothing
 safe_second xs = if null (tail xs)
                  then Nothing
@@ -181,7 +188,7 @@ safe_second xs = if null (tail xs)
 -- remember, this is just one function, with two cases defined: an empty list 
 --   followed by the case of handling a populated list
 -- this is the same thing, shortened by using (_:x:_)
-tidy_second :: [a] -> Maybe a
+tidy_second         :: [a] -> Maybe a
 tidy_second (_:x:_) = Just x
 tidy_second _       = Nothing
 -- let's break down the (_:x:_)
@@ -192,6 +199,7 @@ tidy_second _       = Nothing
 
 -- LOCAL VARIABLES
 -- To assign a new local variable inside a function, use ``let ... in ...``
+lend :: (Fractional a, Ord a) => a -> a -> Maybe a
 lend amount balance = let reserve = 100 -- multiple variables separated by '\n'
                           new_balance = balance - amount
                       in if balance < reserve
@@ -212,12 +220,14 @@ shadow_three = let a = 1
                in let b = 2
                   in a + b
 -- or, even uglier, the a/b names can be the same (even tho they ARE different)
+shadow_outer :: ([Char], Integer)
 shadow_outer = let x = 1
                in ((let x = "foo" in x), x)
 -- the inner 'x' is shadowing (hiding) the outer 'x' (legal; not recommended)
 -- this "returns" the tuple ("foo", 1)
 
 -- even more shadowing; this time unnecessarily:
+quux   :: a -> [Char]
 quux a = let a = "foo"
         in a ++ "eek"
 -- here, we're overriding the input, always setting it to "foo" and
@@ -227,6 +237,7 @@ quux a = let a = "foo"
 
 -- the WHERE clause (local variables cont)
 -- whitespace matters here! the "where" is like let, applied post expression
+lend2                :: (Fractional a, Ord a) => a -> a -> Maybe a
 lend2 amount balance = if amount < reserve * 0.5
                        then Just new_balance
                        else Nothing
@@ -235,14 +246,164 @@ lend2 amount balance = if amount < reserve * 0.5
 -- although this seems backwards at first, it lets the dev place the most
 --  import expression first and foremost, followed by the inner 'support'
 --  expressions needed to partial calculations.
+-- lend3 is demonstrated below; its the same but uses conditional guards
+
+-- WHITESPACE in let/where blocks
+--  is similar to python
+--  within let/where blocks, require indent relative to the first line to stay
+--    in that block
+--  otherwise, unindent to begin a new line in the outer block
+-- to override, use {} with statements separated by ; like so:
+foospace :: Integer
+foospace = let {a = 1; b = 2; c = 3}
+           in a + b + c
 
 -- LOCAL FUNCTIONS
+-- define a function within a function (here, ``plural``)
 pluralize :: String -> [Int] -> [String]
-pluralize word counts = map plural counts
-    where plural 0 = "no " ++ word ++ "s"
-          plural 1 = "one " ++ word
-          plural n = show n ++ " " ++ word ++ "s"
+pluralize word counts = map plural counts -- map applies the fn `plural` to
+                                          --  every element of the counts list.
+    where plural 0 = "no " ++ word ++ "s" -- Local funcs include their parents'
+          plural 1 = "one " ++ word       --  scope'd variables, eg ``word`` in
+          plural n = show n ++ " " ++ word ++ "s" --                  this case.
 
+-- GLOBAL VARIABLES
+this_variable_is_global :: [Char]
+this_variable_is_global = "toplevel = no expression keywords here >=> globalvar"
 
+-- CASE
+my_from_maybe defval wrapped =
+    case wrapped of -- pattern match the result of expression `wrapped` with:
+         -- pattern -> expression evaluated if pattern matches
+         Nothing    -> defval
+         Just value -> value
+         -- the _ wildcard can be used here as a catch-all case,
+         -- HOWEVER, the compiler will no longer be able to usefully verify you
+         -- coded the right types so the default case is not often used with case
 
+-- PATTERN MATCHING PITFALLS
+data Fruit = Apple
+           | Orange
+           deriving (Show)
 
+apple = "apple"
+orange = "orange"
+
+which_fruit       :: String -> Fruit
+which_fruit fruit = case fruit of
+                         -- correct:
+                         "apple"  -> Apple
+                         "orange" -> Orange
+                         -- incorrect:
+                      -- apple  -> Apple
+                      -- orange -> Orange
+
+-- a name can only be used once in a pattern:
+-- bad_nodes_same (Node a _ _) (Node a _ _) = Just a -- where `a` is the name
+-- bad_nodes_same _            _            = Nothing
+
+-- CONDITIONAL GUARDS to the rescue
+-- pattern matching lets you test a type's "shape" but not its "body" ie data
+-- patterns can be followed by one or more guards
+-- a guard is introduced using the pipe `|`
+-- a guard evaluates to a Bool; the pattern and all guards must AND to match
+nodes_same :: (Eq a) => Tree a -> Tree a -> Maybe a
+nodes_same (Node a _ _) (Node b _ _) | a == b   = Just a
+nodes_same _            _                       = Nothing
+
+-- reworked lend2 using guards instead
+lend3                        :: (Fractional a, Ord a) => a -> a -> Maybe a
+lend3 amount balance
+    | amount <= 0            = Nothing
+    | amount > reserve * 0.5 = Nothing
+   -- otherwise is just a special variable bound to True; the default case
+    | otherwise              = Just new_balance
+    where reserve     = 100
+          new_balance = balance - amount
+
+-- drop 3 "foobar" >=> "bar"
+ch2_drop     :: Int -> [a] -> [a]
+ch2_drop n xs = if n <= 0 || null xs
+                then xs
+                else ch2_drop (n - 1) (tail xs)
+
+-- and now using guards
+guard_drop               :: Int -> [a] -> [a]
+guard_drop _ []          = [] -- if we get an empty list, return empty list
+guard_drop n xs | n <= 0 = xs -- n < 0? return the remaining list
+guard_drop n (_:xs)      = guard_drop (n - 1) xs -- else recur w/ (n-1) xs[1:]
+
+-- EXERCISES
+-- 1: recreate the length function
+-- 2: with the proper type signature
+my_len        :: [a] -> Int
+my_len []     = 0
+my_len (x:xs) = 1 + my_len xs
+
+-- 3: compute the mean of a list
+  -- not using stdlib:
+my_sum                    :: (Eq a, Num a) => [a] -> a
+my_sum []                 = 0
+my_sum (x:xs) | xs == []  = x
+              | otherwise = x + my_sum xs
+
+my_avg      :: (Fractional a, Eq a) => [a] -> Maybe a
+my_avg []   = Nothing
+my_avg list = Just ((my_sum list) / fromIntegral (my_len list))
+
+  -- using stdlib:
+avg_stdlib      :: (Fractional a) => [a] -> Maybe a
+avg_stdlib []   = Nothing
+avg_stdlib list = Just ((sum list) / fromIntegral (length list))
+
+-- 4: mirror a list (ie make it a palindrome ie read same forwards as backwards)
+--    eg [1,2,3] >=> [1,2,3,3,2,1]
+palindrome        :: [a] -> [a]
+palindrome []     = []
+palindrome (x:xs) = [x] ++ palindrome xs ++ [x]
+
+-- 5: check if a list is a palindrome or not
+my_reverse        :: [a] -> [a]
+my_reverse []     = []
+my_reverse (x:xs) = my_reverse xs ++ [x]
+
+is_palendrome              :: (Eq a) => [a] -> Bool
+is_palendrome list
+    | list == reverse list = True
+    | otherwise            = False
+
+-- 6: sort a list of lists based on the length of each sublist
+sort_by_len      :: [[a]] -> [[a]]
+sort_by_len list = sortBy compareBy list
+    where compareBy a b = compare (length a) (length b)
+
+-- 7: write python's str.join function
+-- my_join only works on non-list data-type delimeters (eg no strings)
+my_join                 :: a -> [[a]] -> [a]
+my_join delim []        = []
+my_join delim (x:[])    = x
+my_join delim (x:xs)    = x ++ [delim] ++ my_join delim xs
+
+-- my_join_str only works with list data-type delimeters
+my_join_str delim []     = []
+my_join_str delim [x]    = x  -- [x] is sugar for (x:[])
+my_join_str delim (x:xs) = x ++ delim ++ my_join_str delim xs
+
+-- 8: depth of binary tree
+tree_depth                               :: (Num a, Ord a) => Tree t -> a
+tree_depth Leaf                          = 0
+tree_depth (Node _ left right)
+    | tree_depth left > tree_depth right = 1 + tree_depth left
+    | otherwise                          = 1 + tree_depth right
+
+depth2      :: (Num a, Ord a) => Tree t -> a
+depth2 Leaf = 0
+depth2 (Node _ left right) = if depth2 left > depth2 right
+                                then 1 + depth2 left
+                                else 1 + depth2 right
+
+-- 9: define a direction data type containing L/R and straight
+data Turn = LeftTurn
+          | RightTurn
+          | Straight
+            deriving (Show, Eq)
