@@ -10,3 +10,5 @@ Code samples and explanations learned while climbing the Learning Wall of Haskel
 * [A Cross-Platform Split Lines](https://github.com/briancappello/real_world_haskell/blob/master/ch04/SplitLines.hs)
 * [Infix vs Prefix Notation](https://github.com/briancappello/real_world_haskell/blob/master/ch04/InfixOperatorFunctions.hs)
 * [The Data.List Module](https://github.com/briancappello/real_world_haskell/blob/master/ch04/TheDataDotListModule.hs)
+* [Converting a string to an Int](https://github.com/briancappello/real_world_haskell/blob/master/ch04/IntParse.hs)
+* [The Map Function](https://github.com/briancappello/real_world_haskell/blob/master/ch04/Map.hs)
