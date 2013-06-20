@@ -1,4 +1,4 @@
--- file: ch4/TheDataDotListModule.hs
+-- file: ch04/TheDataDotListModule.hs
 
 -- import all of Data.List
 import Data.List

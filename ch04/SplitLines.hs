@@ -1,4 +1,4 @@
--- file: ch4/SplitLines.hs
+-- file: ch04/SplitLines.hs
 
 module SplitLines (splitlines, join_string) where
 

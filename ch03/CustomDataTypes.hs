@@ -1,4 +1,4 @@
--- file: ch3/CustomDataTypes.hs aka BookStore.hs
+-- file: ch03/CustomDataTypes.hs aka BookStore.hs
 
 import Data.Ord
 import Data.List

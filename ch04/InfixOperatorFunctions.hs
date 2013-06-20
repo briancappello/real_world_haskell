@@ -1,4 +1,4 @@
--- ch4/InfixOperatorFunctions.hs
+-- ch04/InfixOperatorFunctions.hs
 
 import Data.List (isPrefixOf, isInfixOf, isSuffixOf)
 
