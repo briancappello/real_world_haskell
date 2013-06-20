@@ -15,7 +15,7 @@ is_line_sep :: Char -> Bool
 is_line_sep char = ( char == '\r' ||
                      char == '\n' )
 
-splitlines          :: [Char] -> [[Char]]
+splitlines :: [Char] -> [[Char]]
 splitlines ""       = [] -- "" is strongly-typed-sugar for []
 splitlines full_str = line:case rest of
                                 ""              -> []
@@ -24,9 +24,16 @@ splitlines full_str = line:case rest of
                                 ('\n':rst)      -> splitlines rst -- () optional
                             where (line, rest) = break is_line_sep full_str
 
+my_unlines :: [[Char]] -> [Char]
+my_unlines []     = []
+my_unlines (x:[]) = x ++ "\n"
+my_unlines (x:xs) = x ++ "\n" ++ my_unlines xs
+
 -- from chapter 3
 -- join_string only works with list (eg [Char]) data-type delimeters, not Char
-join_string              :: [a] -> [[a]] -> [a]
+join_string :: [Char] -> [[Char]] -> [Char]
 join_string delim []     = []
 join_string delim [x]    = x  -- [x] is sugar for (x:[])
 join_string delim (x:xs) = x ++ delim ++ join_string delim xs
+
+
