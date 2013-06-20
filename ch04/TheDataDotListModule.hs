@@ -45,6 +45,11 @@ list_init  = init "a list" -- "a lis"
 
 
 -- CHECK for EMPTY LISTS
+
+    -- PARTIAL and TOTAL FUNCTIONS
+    --   partial: only returns valid values for a subset of all valid inputs
+    --   total: always returns valid values for all valid inputs
+
 an_example :: [Char] -> Char
 an_example xs = if not (null xs)
                    then head xs
@@ -54,9 +59,17 @@ another_example :: [Char] -> Char
 another_example (x:_) = x
 another_example []    = 'z' -- same note as above
 
+-- the full smart_example is apparently covered later, in the chapter for Monads
 smart_example :: [a] -> Maybe a
 smart_example (x:_) = Just x
 smart_example []    = Nothing
 
+-- it goes something like this:
+safe_from_empty :: ([a] -> b) => [a] -> Maybe b
+safe_from_empty fn list
+    | null list = Nothing
+    | otherwise = Just $ fn list
 
+safe_tail = safe_from_empty tail
+safe_init = safe_from_empty init
 
