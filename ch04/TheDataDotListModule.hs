@@ -73,3 +73,27 @@ safe_from_empty fn list
 safe_tail = safe_from_empty tail
 safe_init = safe_from_empty init
 
+
+-- MORE SIMPLE LIST MANIPULATIONS
+
+-- append (++)
+append_example = [1] ++ [2,3] -- [1,2,3]
+
+-- concat: make a single list from a list of lists
+concat_example = concat [[1,2], [3,4], [5,6]] -- [1,2,3,4,5,6]
+
+-- reverse: reverses the order of a list
+reverse_example = reverse "hello" -- "olleh"
+
+-- AND & OR: for lists with Bool type contents, these walk over the list:
+-- and
+and_is_true = and []
+and_is_also_true = and [True, True]
+and_is_false = and [True, False, True]
+
+-- or
+or_is_true = or [True]
+or_is_also_true = or [True, False, False]
+or_is_false = or []
+
+
