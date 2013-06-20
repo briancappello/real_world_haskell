@@ -2,6 +2,11 @@
 
 import Data.List (isPrefixOf, isInfixOf, isSuffixOf)
 
+-- To use these declarations interactively from within ghci:
+--   :load InfixOperatorFunctions.hs
+-- Or to only load the Data.List module:
+--   :module +Data.List    -- can also be shortened using :m +Data.List
+
 -- Haskell allows one to define their own functions that optionally take their
 --  arguments on the function's left/right sides eg:
 a `plus` b = a + b
@@ -21,8 +26,8 @@ bar = 1 `Pair` 2 -- again, note the use of `backticks` for infix form
 -- This applies to the math operators too:
 result = (*) 5 100 -- >=> 500 (parenthesis reqd for prefix, no backticks for infix)
 
--- INTRODUCING THE elem FUNCTION
--- Included by default. Indicates whether a value is present in a list:
+-- Introducing the elem expression (function)
+-- Imported by default. Indicates whether a value is present in a list:
 letter_c = elem 'c' "a string with c in it" -- >=> True
 -- or more clearly used in infix form:
 letter_d = 'd' `elem` "a string with c in it" -- >=> False
