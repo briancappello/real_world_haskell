@@ -12,3 +12,5 @@ Code samples and explanations learned while climbing the Learning Wall of Haskel
 * [The Data.List Module](https://github.com/briancappello/real_world_haskell/blob/master/ch04/TheDataDotListModule.hs)
 * [Converting a String to an Int](https://github.com/briancappello/real_world_haskell/blob/master/ch04/IntParse.hs)
 * [The Map Function](https://github.com/briancappello/real_world_haskell/blob/master/ch04/Map.hs)
+
+[hello?](docs/hello.md)
