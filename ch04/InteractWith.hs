@@ -44,7 +44,7 @@ interactWith the_function inputFile outputFile = do
 my_function = splitlines_to_str
 
 -- input_file ([Char]) --> split ([[Char]]) --> join_string ([Char]) --> outfile
-splitlines_to_str long_str = join_string " " (splitlines long_str) ++ "\n"
+splitlines_to_str long_str = (join_string " " (splitlines long_str)) ++ "\n"
 
 main = mainWith my_function
     where mainWith the_function = do -- the_function == my_function
